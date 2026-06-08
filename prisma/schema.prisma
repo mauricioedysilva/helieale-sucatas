@@ -1,0 +1,148 @@
+// Prisma schema — HelieAle Sucatas
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TipoPedido {
+  COMPRA
+  VENDA
+}
+
+enum UnidadeProduto {
+  KG
+  UNIDADE
+}
+
+model Usuario {
+  id      String   @id @default(cuid())
+  nome    String
+  login   String   @unique
+  senha   String
+  pedidos Pedido[]
+
+  criadoEm DateTime @default(now())
+}
+
+model Cliente {
+  id       String  @id @default(cuid())
+  nome     String
+  celular  String?
+  endereco String?
+  cpf      String?
+
+  pedidos Pedido[]
+
+  criadoEm DateTime @default(now())
+}
+
+model Empresa {
+  id          String  @id @default(cuid())
+  nome        String
+  cnpj        String?
+  endereco    String?
+  responsavel String?
+
+  criadoEm DateTime @default(now())
+}
+
+model Produto {
+  id            String         @id @default(cuid())
+  nome          String
+  unidade       UnidadeProduto @default(KG)
+  valorUnitario Float
+  estoqueAtual  Float          @default(0)
+  estoqueMinimo Float          @default(0)
+
+  itens ItemPedido[]
+
+  criadoEm   DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+}
+
+model FormaPagamento {
+  id      String   @id @default(cuid())
+  nome    String   @unique
+  pedidos Pedido[]
+}
+
+model Pedido {
+  id        String     @id @default(cuid())
+  tipo      TipoPedido
+  data      DateTime   @default(now())
+  valorTotal Float
+  observacao String?
+
+  clienteId        String?
+  cliente          Cliente?        @relation(fields: [clienteId], references: [id])
+  usuarioId        String?
+  usuario          Usuario?        @relation(fields: [usuarioId], references: [id])
+  formaPagamentoId String?
+  formaPagamento   FormaPagamento? @relation(fields: [formaPagamentoId], references: [id])
+
+  itens ItemPedido[]
+
+  criadoEm DateTime @default(now())
+}
+
+model ItemPedido {
+  id            String  @id @default(cuid())
+  quantidade    Float
+  valorUnitario Float
+  subtotal      Float
+
+  pedidoId  String
+  pedido    Pedido  @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  produtoId String
+  produto   Produto @relation(fields: [produtoId], references: [id])
+}
+
+model Gasto {
+  id    String   @id @default(cuid())
+  nome  String
+  data  DateTime @default(now())
+  valor Float
+}
+
+model Colaborador {
+  id      String  @id @default(cuid())
+  nome    String
+  salario Float
+
+  vales     ValeColaborador[]
+  descontos DescontoColaborador[]
+
+  criadoEm DateTime @default(now())
+}
+
+model ValeColaborador {
+  id    String   @id @default(cuid())
+  valor Float
+  data  DateTime @default(now())
+
+  colaboradorId String
+  colaborador   Colaborador @relation(fields: [colaboradorId], references: [id], onDelete: Cascade)
+}
+
+model DescontoColaborador {
+  id     String   @id @default(cuid())
+  valor  Float
+  data   DateTime @default(now())
+  motivo String?
+
+  colaboradorId String
+  colaborador   Colaborador @relation(fields: [colaboradorId], references: [id], onDelete: Cascade)
+}
+
+model Caixa {
+  id             String    @id @default(cuid())
+  data           DateTime  @default(now())
+  valorAbertura  Float
+  valorFechamento Float?
+  observacao     String?
+}

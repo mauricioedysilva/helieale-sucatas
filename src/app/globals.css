@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Impressão de comandas/relatórios em impressora térmica 80mm */
+.recibo-80mm {
+  display: none;
+}
+
+@media print {
+  body.printing-receipt * {
+    visibility: hidden;
+  }
+  body.printing-receipt .recibo-80mm,
+  body.printing-receipt .recibo-80mm * {
+    visibility: visible;
+  }
+  body.printing-receipt .recibo-80mm {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 80mm;
+    padding: 2mm;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 11px;
+    color: #000;
+  }
+  body.printing-receipt .recibo-80mm h2 {
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    margin: 0 0 2mm 0;
+  }
+  body.printing-receipt .recibo-80mm .linha {
+    display: flex;
+    justify-content: space-between;
+    gap: 4px;
+  }
+  body.printing-receipt .recibo-80mm hr {
+    border: none;
+    border-top: 1px dashed #000;
+    margin: 2mm 0;
+  }
+  @page {
+    size: 80mm auto;
+    margin: 0;
+  }
+}
