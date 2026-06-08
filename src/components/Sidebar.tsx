@@ -12,7 +12,6 @@ const links = [
   { href: "/estoque", label: "Estoque" },
   { href: "/produtos", label: "Produtos" },
   { href: "/clientes", label: "Clientes" },
-  { href: "/empresas", label: "Empresas" },
   { href: "/financeiro", label: "Financeiro" },
   { href: "/gastos", label: "Gastos" },
   { href: "/colaboradores", label: "Colaboradores" },

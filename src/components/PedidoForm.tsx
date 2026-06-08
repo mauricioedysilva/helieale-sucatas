@@ -2,8 +2,9 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { Button, Card, Field, Input, Select, Textarea } from "@/components/ui";
+import { ClienteSeletor, type ClienteResumo } from "@/components/ClienteSeletor";
 
-type Cliente = { id: string; nome: string };
+type Cliente = ClienteResumo;
 type Produto = { id: string; nome: string; unidade: "KG" | "UNIDADE"; valorUnitario: number; estoqueAtual: number };
 type FormaPagamento = { id: string; nome: string };
 
@@ -118,16 +119,12 @@ export function PedidoForm({
     <Card>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Field label={tipo === "COMPRA" ? "Cliente / vendedor (opcional)" : "Cliente comprador (opcional)"}>
-            <Select value={clienteId} onChange={(e) => setClienteId(e.target.value)}>
-              <option value="">— Não informado —</option>
-              {clientes.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.nome}
-                </option>
-              ))}
-            </Select>
-          </Field>
+          <ClienteSeletor
+            label={tipo === "COMPRA" ? "Cliente / vendedor (opcional)" : "Cliente comprador (opcional)"}
+            clientes={clientes}
+            value={clienteId}
+            onChange={setClienteId}
+          />
           <Field label="Forma de pagamento">
             <Select value={formaPagamentoId} onChange={(e) => setFormaPagamentoId(e.target.value)}>
               <option value="">— Selecionar —</option>

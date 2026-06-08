@@ -9,9 +9,10 @@ type Cliente = {
   celular: string | null;
   endereco: string | null;
   cpf: string | null;
+  cnpj: string | null;
 };
 
-const emptyForm = { nome: "", celular: "", endereco: "", cpf: "" };
+const emptyForm = { nome: "", celular: "", endereco: "", cpf: "", cnpj: "" };
 
 export default function ClientesPage() {
   const [clientes, setClientes] = useState<Cliente[]>([]);
@@ -35,6 +36,7 @@ export default function ClientesPage() {
       celular: cliente.celular ?? "",
       endereco: cliente.endereco ?? "",
       cpf: cliente.cpf ?? "",
+      cnpj: cliente.cnpj ?? "",
     });
   }
 
@@ -75,7 +77,10 @@ export default function ClientesPage() {
 
   return (
     <div>
-      <PageTitle title="Clientes" subtitle="Cadastro de clientes do ferro velho" />
+      <PageTitle
+        title="Clientes"
+        subtitle="Cadastro de clientes e empresas do ferro velho — pessoas físicas (CPF) e jurídicas (CNPJ) ficam centralizadas aqui"
+      />
 
       <Card className="mb-6">
         <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -91,6 +96,9 @@ export default function ClientesPage() {
           <Field label="CPF (opcional)">
             <Input value={form.cpf} onChange={(e) => setForm({ ...form, cpf: e.target.value })} />
           </Field>
+          <Field label="CNPJ (opcional)">
+            <Input value={form.cnpj} onChange={(e) => setForm({ ...form, cnpj: e.target.value })} placeholder="Para clientes que são empresas" />
+          </Field>
           <div className="flex items-end gap-2 lg:col-span-4">
             <Button type="submit" disabled={loading}>
               {editingId ? "Salvar alterações" : "Adicionar cliente"}
@@ -105,10 +113,10 @@ export default function ClientesPage() {
       </Card>
 
       <Card>
-        <Table headers={["Nome", "Celular", "Endereço", "CPF", ""]}>
+        <Table headers={["Nome", "Celular", "Endereço", "CPF", "CNPJ", ""]}>
           {clientes.length === 0 && (
             <tr>
-              <td colSpan={5}>
+              <td colSpan={6}>
                 <EmptyState message="Nenhum cliente cadastrado ainda." />
               </td>
             </tr>
@@ -119,6 +127,7 @@ export default function ClientesPage() {
               <td className="px-3 py-2 text-slate-600">{cliente.celular || "—"}</td>
               <td className="px-3 py-2 text-slate-600">{cliente.endereco || "—"}</td>
               <td className="px-3 py-2 text-slate-600">{cliente.cpf || "—"}</td>
+              <td className="px-3 py-2 text-slate-600">{cliente.cnpj || "—"}</td>
               <td className="px-3 py-2 text-right">
                 <div className="flex justify-end gap-2">
                   <Button variant="secondary" onClick={() => startEdit(cliente)}>

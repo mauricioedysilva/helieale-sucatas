@@ -35,18 +35,9 @@ model Cliente {
   celular  String?
   endereco String?
   cpf      String?
+  cnpj     String?
 
   pedidos Pedido[]
-
-  criadoEm DateTime @default(now())
-}
-
-model Empresa {
-  id          String  @id @default(cuid())
-  nome        String
-  cnpj        String?
-  endereco    String?
-  responsavel String?
 
   criadoEm DateTime @default(now())
 }

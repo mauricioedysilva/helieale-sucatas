@@ -11,6 +11,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       celular: body.celular || null,
       endereco: body.endereco || null,
       cpf: body.cpf || null,
+      cnpj: body.cnpj || null,
     },
   });
   return NextResponse.json(cliente);

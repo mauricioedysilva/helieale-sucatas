@@ -14,6 +14,7 @@ export async function POST(req: NextRequest) {
       celular: body.celular || null,
       endereco: body.endereco || null,
       cpf: body.cpf || null,
+      cnpj: body.cnpj || null,
     },
   });
   return NextResponse.json(cliente, { status: 201 });
