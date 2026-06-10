@@ -7,8 +7,8 @@ export async function GET(req: NextRequest) {
   const ate = searchParams.get("ate");
 
   const range: { gte?: Date; lte?: Date } = {};
-  if (de) range.gte = new Date(`${de}T00:00:00`);
-  if (ate) range.lte = new Date(`${ate}T23:59:59.999`);
+  if (de) range.gte = new Date(`${de}T00:00:00-03:00`);
+  if (ate) range.lte = new Date(`${ate}T23:59:59.999-03:00`);
 
   const [pedidos, gastosAgg, produtos] = await Promise.all([
     prisma.pedido.findMany({

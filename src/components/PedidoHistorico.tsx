@@ -7,7 +7,7 @@ import { Comanda, imprimirComanda, type PedidoParaImpressao } from "@/components
 type Pedido = PedidoParaImpressao;
 
 function todayStr() {
-  return new Date().toISOString().slice(0, 10);
+  return new Date().toLocaleDateString("en-CA", { timeZone: "America/Sao_Paulo" });
 }
 
 export function PedidoHistorico({ tipo, refreshKey }: { tipo: "COMPRA" | "VENDA"; refreshKey?: number }) {

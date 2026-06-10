@@ -2,14 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 function dayRange(dataStr: string) {
-  const inicio = new Date(`${dataStr}T00:00:00`);
-  const fim = new Date(`${dataStr}T23:59:59.999`);
+  const inicio = new Date(`${dataStr}T00:00:00-03:00`);
+  const fim = new Date(`${dataStr}T23:59:59.999-03:00`);
   return { gte: inicio, lte: fim };
 }
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const dataStr = searchParams.get("data") || new Date().toISOString().slice(0, 10);
+  const dataStr = searchParams.get("data") || new Intl.DateTimeFormat("en-CA", { timeZone: "America/Sao_Paulo" }).format(new Date());
   const range = dayRange(dataStr);
 
   const [caixa, compras, vendas, gastos] = await Promise.all([

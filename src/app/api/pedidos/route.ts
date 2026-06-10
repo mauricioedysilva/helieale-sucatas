@@ -11,8 +11,8 @@ export async function GET(req: NextRequest) {
   if (tipo === "COMPRA" || tipo === "VENDA") where.tipo = tipo;
   if (de || ate) {
     const data: Record<string, Date> = {};
-    if (de) data.gte = new Date(`${de}T00:00:00`);
-    if (ate) data.lte = new Date(`${ate}T23:59:59`);
+    if (de) data.gte = new Date(`${de}T00:00:00-03:00`);
+    if (ate) data.lte = new Date(`${ate}T23:59:59.999-03:00`);
     where.data = data;
   }
 

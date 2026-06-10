@@ -14,7 +14,7 @@ type Pedido = {
 };
 
 function todayStr() {
-  return new Date().toISOString().slice(0, 10);
+  return new Date().toLocaleDateString("en-CA", { timeZone: "America/Sao_Paulo" });
 }
 
 export default function PedidosPage() {
