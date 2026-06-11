@@ -52,6 +52,11 @@ function LoginForm() {
           </div>
         </div>
 
+        <p className="mb-5 text-center text-sm italic text-slate-500">
+          &ldquo;Bendito serás ao entrares e bendito serás ao saíres.&rdquo;
+          <span className="mt-0.5 block not-italic font-medium text-slate-400 text-xs">Dt 28: 6-8</span>
+        </p>
+
         <div className="rounded-2xl border border-slate-200 bg-white p-7 shadow-sm">
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div>
