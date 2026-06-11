@@ -53,7 +53,7 @@ function LoginForm() {
         </div>
 
         <p className="mb-5 text-center text-sm italic text-slate-500">
-          &ldquo;Bendito serás ao entrares e bendito serás ao saíres.&rdquo;
+          <strong>&ldquo;Bendito serás ao entrares e bendito serás ao saíres.&rdquo;</strong>
           <span className="mt-0.5 block not-italic font-medium text-slate-400 text-xs">Dt 28: 6-8</span>
         </p>
 
