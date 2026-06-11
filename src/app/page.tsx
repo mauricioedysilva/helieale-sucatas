@@ -3,27 +3,25 @@ import { prisma } from "@/lib/prisma";
 import { Card, PageTitle } from "@/components/ui";
 
 export default async function Home() {
-  const [clientes, produtos, pedidosHoje, estoqueBaixo] = await Promise.all([
+  const [clientes, produtos, pedidosHoje] = await Promise.all([
     prisma.cliente.count(),
     prisma.produto.count(),
     prisma.pedido.count({
-      where: { data: { gte: new Date(new Date().setHours(0, 0, 0, 0)) } },
+      where: { data: { gte: new Date(`${new Intl.DateTimeFormat("en-CA", { timeZone: "America/Sao_Paulo" }).format(new Date())}T00:00:00-03:00`) } },
     }),
-    prisma.produto.findMany({ where: { estoqueAtual: { lte: 0 } } }),
   ]);
 
   const cards = [
     { label: "Clientes cadastrados", value: clientes, href: "/clientes" },
     { label: "Produtos cadastrados", value: produtos, href: "/produtos" },
     { label: "Pedidos hoje", value: pedidosHoje, href: "/pedidos" },
-    { label: "Produtos sem estoque", value: estoqueBaixo.length, href: "/estoque" },
   ];
 
   return (
     <div>
       <PageTitle title="Sucatas Alumínio" subtitle="Painel inicial do sistema de gestão" />
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {cards.map((card) => (
           <Link key={card.label} href={card.href}>
             <Card className="transition-shadow hover:shadow-md">
@@ -33,17 +31,6 @@ export default async function Home() {
           </Link>
         ))}
       </div>
-
-      {estoqueBaixo.length > 0 && (
-        <Card className="mt-6 border-red-200 bg-red-50">
-          <p className="font-semibold text-red-700">⚠ Atenção: produtos sem estoque</p>
-          <ul className="mt-2 list-disc pl-5 text-sm text-red-700">
-            {estoqueBaixo.map((p) => (
-              <li key={p.id}>{p.nome}</li>
-            ))}
-          </ul>
-        </Card>
-      )}
 
       <Card className="mt-6">
         <p className="text-sm text-slate-600">
