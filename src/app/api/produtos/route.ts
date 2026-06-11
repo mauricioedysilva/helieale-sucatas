@@ -13,8 +13,8 @@ export async function POST(req: NextRequest) {
       nome: body.nome,
       unidade: body.unidade === "UNIDADE" ? "UNIDADE" : "KG",
       valorUnitario: Number(body.valorUnitario),
-      estoqueAtual: Number(body.estoqueAtual ?? 0),
-      estoqueMinimo: Number(body.estoqueMinimo ?? 0),
+      estoqueAtual: 0,
+      estoqueMinimo: 0,
     },
   });
   return NextResponse.json(produto, { status: 201 });

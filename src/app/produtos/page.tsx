@@ -9,10 +9,9 @@ type Produto = {
   unidade: "KG" | "UNIDADE";
   valorUnitario: number;
   estoqueAtual: number;
-  estoqueMinimo: number;
 };
 
-const emptyForm = { nome: "", unidade: "KG", valorUnitario: "", estoqueAtual: "0", estoqueMinimo: "0" };
+const emptyForm = { nome: "", unidade: "KG", valorUnitario: "" };
 
 export default function ProdutosPage() {
   const [produtos, setProdutos] = useState<Produto[]>([]);
@@ -26,9 +25,7 @@ export default function ProdutosPage() {
     setProdutos(await res.json());
   }
 
-  useEffect(() => {
-    load();
-  }, []);
+  useEffect(() => { load(); }, []);
 
   function startEdit(produto: Produto) {
     setEditingId(produto.id);
@@ -36,19 +33,19 @@ export default function ProdutosPage() {
       nome: produto.nome,
       unidade: produto.unidade,
       valorUnitario: String(produto.valorUnitario),
-      estoqueAtual: String(produto.estoqueAtual),
-      estoqueMinimo: String(produto.estoqueMinimo),
     });
   }
 
   function cancelEdit() {
     setEditingId(null);
     setForm(emptyForm);
+    setErro(null);
   }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setLoading(true);
+    setErro(null);
     try {
       if (editingId) {
         await fetch(`/api/produtos/${editingId}`, {
@@ -86,11 +83,11 @@ export default function ProdutosPage() {
     <div>
       <PageTitle
         title="Produtos"
-        subtitle="Cadastro de materiais (sucata) com valor por kg/unidade e controle de estoque"
+        subtitle="Cadastro de materiais — o estoque é atualizado automaticamente pelas Compras e Vendas"
       />
 
       <Card className="mb-6">
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <Field label="Nome *">
             <Input required value={form.nome} onChange={(e) => setForm({ ...form, nome: e.target.value })} />
           </Field>
@@ -110,23 +107,7 @@ export default function ProdutosPage() {
               onChange={(e) => setForm({ ...form, valorUnitario: e.target.value })}
             />
           </Field>
-          <Field label="Estoque atual">
-            <Input
-              type="number"
-              step="0.01"
-              value={form.estoqueAtual}
-              onChange={(e) => setForm({ ...form, estoqueAtual: e.target.value })}
-            />
-          </Field>
-          <Field label="Estoque mínimo (alerta)">
-            <Input
-              type="number"
-              step="0.01"
-              value={form.estoqueMinimo}
-              onChange={(e) => setForm({ ...form, estoqueMinimo: e.target.value })}
-            />
-          </Field>
-          <div className="flex items-end gap-2 lg:col-span-5">
+          <div className="flex items-end gap-2 sm:col-span-3">
             <Button type="submit" disabled={loading}>
               {editingId ? "Salvar alterações" : "Adicionar produto"}
             </Button>
@@ -146,7 +127,7 @@ export default function ProdutosPage() {
       )}
 
       <Card>
-        <Table headers={["Produto", "Unidade", "Valor", "Estoque atual", "Estoque mínimo", ""]}>
+        <Table headers={["Produto", "Unidade", "Valor", "Estoque atual", "Situação", ""]}>
           {produtos.length === 0 && (
             <tr>
               <td colSpan={6}>
@@ -155,7 +136,7 @@ export default function ProdutosPage() {
             </tr>
           )}
           {produtos.map((produto) => {
-            const baixo = produto.estoqueAtual <= produto.estoqueMinimo;
+            const esgotado = produto.estoqueAtual <= 0;
             return (
               <tr key={produto.id}>
                 <td className="px-3 py-2 font-medium">{produto.nome}</td>
@@ -163,27 +144,20 @@ export default function ProdutosPage() {
                 <td className="px-3 py-2 text-slate-600">
                   R$ {produto.valorUnitario.toFixed(2)} / {produto.unidade === "KG" ? "kg" : "un"}
                 </td>
-                <td className="px-3 py-2">
-                  <span className={baixo ? "font-semibold text-red-600" : "text-slate-800"}>
-                    {produto.estoqueAtual} {produto.unidade === "KG" ? "kg" : "un"}
-                  </span>
-                  {baixo && (
-                    <span className="ml-2 rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">
-                      Estoque baixo
-                    </span>
-                  )}
+                <td className="px-3 py-2 font-semibold" style={{ color: esgotado ? "#B03030" : "#1A6B1A" }}>
+                  {produto.estoqueAtual} {produto.unidade === "KG" ? "kg" : "un"}
                 </td>
-                <td className="px-3 py-2 text-slate-600">
-                  {produto.estoqueMinimo} {produto.unidade === "KG" ? "kg" : "un"}
+                <td className="px-3 py-2">
+                  {esgotado ? (
+                    <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-700">Sem estoque</span>
+                  ) : (
+                    <span className="rounded-full px-2 py-0.5 text-xs font-semibold" style={{ background: "#DFF0D8", color: "#1A6B1A" }}>Disponível</span>
+                  )}
                 </td>
                 <td className="px-3 py-2 text-right">
                   <div className="flex justify-end gap-2">
-                    <Button variant="secondary" onClick={() => startEdit(produto)}>
-                      Editar
-                    </Button>
-                    <Button variant="danger" onClick={() => handleDelete(produto.id)}>
-                      Excluir
-                    </Button>
+                    <Button variant="secondary" onClick={() => startEdit(produto)}>Editar</Button>
+                    <Button variant="danger" onClick={() => handleDelete(produto.id)}>Excluir</Button>
                   </div>
                 </td>
               </tr>

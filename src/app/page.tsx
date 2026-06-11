@@ -9,14 +9,14 @@ export default async function Home() {
     prisma.pedido.count({
       where: { data: { gte: new Date(new Date().setHours(0, 0, 0, 0)) } },
     }),
-    prisma.produto.findMany({ where: {} }).then((produtos) => produtos.filter((p) => p.estoqueAtual <= p.estoqueMinimo)),
+    prisma.produto.findMany({ where: { estoqueAtual: { lte: 0 } } }),
   ]);
 
   const cards = [
     { label: "Clientes cadastrados", value: clientes, href: "/clientes" },
     { label: "Produtos cadastrados", value: produtos, href: "/produtos" },
     { label: "Pedidos hoje", value: pedidosHoje, href: "/pedidos" },
-    { label: "Produtos com estoque baixo", value: estoqueBaixo.length, href: "/estoque" },
+    { label: "Produtos sem estoque", value: estoqueBaixo.length, href: "/estoque" },
   ];
 
   return (
@@ -36,12 +36,10 @@ export default async function Home() {
 
       {estoqueBaixo.length > 0 && (
         <Card className="mt-6 border-red-200 bg-red-50">
-          <p className="font-semibold text-red-700">Atenção: estoque baixo</p>
+          <p className="font-semibold text-red-700">⚠ Atenção: produtos sem estoque</p>
           <ul className="mt-2 list-disc pl-5 text-sm text-red-700">
             {estoqueBaixo.map((p) => (
-              <li key={p.id}>
-                {p.nome}: {p.estoqueAtual} {p.unidade === "KG" ? "kg" : "un"} (mínimo {p.estoqueMinimo})
-              </li>
+              <li key={p.id}>{p.nome}</li>
             ))}
           </ul>
         </Card>

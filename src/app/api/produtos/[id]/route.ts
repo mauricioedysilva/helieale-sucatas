@@ -10,8 +10,6 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       nome: body.nome,
       unidade: body.unidade === "UNIDADE" ? "UNIDADE" : "KG",
       valorUnitario: Number(body.valorUnitario),
-      estoqueAtual: Number(body.estoqueAtual ?? 0),
-      estoqueMinimo: Number(body.estoqueMinimo ?? 0),
     },
   });
   return NextResponse.json(produto);
