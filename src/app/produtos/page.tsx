@@ -19,6 +19,7 @@ export default function ProdutosPage() {
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
 
   async function load() {
     const res = await fetch("/api/produtos");
@@ -71,7 +72,13 @@ export default function ProdutosPage() {
 
   async function handleDelete(id: string) {
     if (!confirm("Excluir este produto?")) return;
-    await fetch(`/api/produtos/${id}`, { method: "DELETE" });
+    setErro(null);
+    const res = await fetch(`/api/produtos/${id}`, { method: "DELETE" });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      setErro(data.error || "Não foi possível excluir o produto.");
+      return;
+    }
     await load();
   }
 
@@ -131,6 +138,12 @@ export default function ProdutosPage() {
           </div>
         </form>
       </Card>
+
+      {erro && (
+        <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {erro}
+        </div>
+      )}
 
       <Card>
         <Table headers={["Produto", "Unidade", "Valor", "Estoque atual", "Estoque mínimo", ""]}>
