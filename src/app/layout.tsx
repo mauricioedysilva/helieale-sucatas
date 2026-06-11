@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "HelieAle Sucatas — Gestão",
-  description: "Sistema de gestão para ferro velho HelieAle Sucatas",
+  title: "Sucatas Alumínio — Gestão",
+  description: "Sistema de gestão para ferro velho Sucatas Alumínio",
 };
 
 export default function RootLayout({

@@ -24,7 +24,7 @@ export function Comanda({ pedido }: { pedido: PedidoParaImpressao | null }) {
 
   return (
     <div className="recibo-80mm">
-      <h2>HelieAle Sucatas</h2>
+      <h2>Sucatas Alumínio</h2>
       <p style={{ textAlign: "center", margin: "0 0 2mm 0" }}>
         {pedido.tipo === "COMPRA" ? "COMPROVANTE DE COMPRA" : "COMPROVANTE DE VENDA"}
       </p>

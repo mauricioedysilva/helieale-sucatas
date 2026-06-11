@@ -40,7 +40,7 @@ export function Sidebar() {
   return (
     <aside className="flex w-60 shrink-0 flex-col border-r border-slate-200 bg-slate-50 print:hidden">
       <div className="px-4 py-5 border-b border-slate-200">
-        <p className="text-lg font-bold text-slate-800">HelieAle Sucatas</p>
+        <p className="text-lg font-bold text-slate-800">Sucatas Alumínio</p>
         <p className="text-xs text-slate-500">Sistema de gestão</p>
       </div>
       <nav className="flex flex-1 flex-col gap-1 overflow-y-auto p-3">

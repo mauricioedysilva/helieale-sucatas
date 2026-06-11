@@ -42,7 +42,7 @@ function LoginForm() {
     <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
       <div className="w-full max-w-sm rounded-xl border border-slate-200 bg-white p-8 shadow-sm">
         <div className="mb-6 text-center">
-          <p className="text-xl font-bold text-slate-800">HelieAle Sucatas</p>
+          <p className="text-xl font-bold text-slate-800">Sucatas Alumínio</p>
           <p className="mt-1 text-sm text-slate-500">Entre com seu usuário e senha para continuar</p>
         </div>
 

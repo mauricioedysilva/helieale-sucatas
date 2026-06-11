@@ -28,7 +28,7 @@ export function ComandaFechamento({ fechamento }: { fechamento: FechamentoParaIm
 
   return (
     <div className="recibo-80mm">
-      <h2>HelieAle Sucatas</h2>
+      <h2>Sucatas Alumínio</h2>
       <p style={{ textAlign: "center", margin: "0 0 1mm 0" }}>FECHAMENTO DE CAIXA</p>
       <p style={{ textAlign: "center", margin: "0 0 2mm 0" }}>{dataFormatada}</p>
       <hr />

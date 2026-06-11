@@ -197,7 +197,7 @@ export default function RelatoriosPage() {
       {relatorio && (
         <div id="relatorio-impressao">
           <p className="mb-4 hidden text-sm text-slate-600 print:block">
-            Período: {de} a {ate} — HelieAle Sucatas
+            Período: {de} a {ate} — Sucatas Alumínio
           </p>
 
           <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
