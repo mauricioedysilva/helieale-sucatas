@@ -1,22 +1,38 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import {
+  BarChart2,
+  DollarSign,
+  Home,
+  List,
+  LogOut,
+  Package,
+  Receipt,
+  Settings,
+  ShoppingCart,
+  Tag,
+  TrendingDown,
+  TrendingUp,
+  Users,
+} from "lucide-react";
 
 const links = [
-  { href: "/", label: "Início" },
-  { href: "/pedidos", label: "Pedidos" },
-  { href: "/compras", label: "Compras" },
-  { href: "/vendas", label: "Vendas" },
-  { href: "/estoque", label: "Estoque" },
-  { href: "/produtos", label: "Produtos" },
-  { href: "/clientes", label: "Clientes" },
-  { href: "/financeiro", label: "Financeiro" },
-  { href: "/gastos", label: "Gastos" },
-  { href: "/colaboradores", label: "Colaboradores" },
-  { href: "/relatorios", label: "Relatórios" },
-  { href: "/configuracoes", label: "Configurações" },
+  { href: "/",              label: "Início",        Icon: Home },
+  { href: "/pedidos",       label: "Pedidos",       Icon: List },
+  { href: "/compras",       label: "Compras",       Icon: TrendingDown },
+  { href: "/vendas",        label: "Vendas",        Icon: TrendingUp },
+  { href: "/estoque",       label: "Estoque",       Icon: Package },
+  { href: "/produtos",      label: "Produtos",      Icon: Tag },
+  { href: "/clientes",      label: "Clientes",      Icon: Users },
+  { href: "/financeiro",    label: "Financeiro",    Icon: DollarSign },
+  { href: "/gastos",        label: "Gastos",        Icon: Receipt },
+  { href: "/colaboradores", label: "Colaboradores", Icon: ShoppingCart },
+  { href: "/relatorios",    label: "Relatórios",    Icon: BarChart2 },
+  { href: "/configuracoes", label: "Configurações", Icon: Settings },
 ];
 
 export function Sidebar() {
@@ -38,36 +54,61 @@ export function Sidebar() {
   }
 
   return (
-    <aside className="flex w-60 shrink-0 flex-col border-r border-slate-200 bg-slate-50 print:hidden">
-      <div className="px-4 py-5 border-b border-slate-200">
-        <p className="text-lg font-bold text-slate-800">Sucatas Alumínio</p>
-        <p className="text-xs text-slate-500">Sistema de gestão</p>
+    <aside className="flex w-56 shrink-0 flex-col print:hidden" style={{ background: "#1A6B1A" }}>
+      <div className="flex flex-col items-center gap-2 border-b px-4 py-5" style={{ borderColor: "rgba(255,255,255,0.12)" }}>
+        <div className="relative h-20 w-20 overflow-hidden rounded-full border-2 border-white/20 bg-white/10">
+          <Image
+            src="/logo.png"
+            alt="Sucatas Alumínio"
+            fill
+            className="object-contain p-1"
+            priority
+          />
+        </div>
+        <div className="text-center">
+          <p className="text-sm font-bold text-white">Sucatas Alumínio</p>
+          <p className="text-xs" style={{ color: "rgba(255,255,255,0.5)" }}>Sistema de gestão</p>
+        </div>
       </div>
-      <nav className="flex flex-1 flex-col gap-1 overflow-y-auto p-3">
-        {links.map((link) => {
-          const active = pathname === link.href;
+
+      <nav className="flex flex-1 flex-col gap-0.5 overflow-y-auto p-2">
+        {links.map(({ href, label, Icon }) => {
+          const active = pathname === href;
           return (
             <Link
-              key={link.href}
-              href={link.href}
-              className={`rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+              key={href}
+              href={href}
+              className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-all"
+              style={
                 active
-                  ? "bg-emerald-600 text-white"
-                  : "text-slate-700 hover:bg-slate-200"
-              }`}
+                  ? { background: "#F5C200", color: "#1A3A00" }
+                  : { color: "rgba(255,255,255,0.75)" }
+              }
+              onMouseEnter={(e) => {
+                if (!active) (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.1)";
+              }}
+              onMouseLeave={(e) => {
+                if (!active) (e.currentTarget as HTMLElement).style.background = "transparent";
+              }}
             >
-              {link.label}
+              <Icon size={16} aria-hidden />
+              {label}
             </Link>
           );
         })}
       </nav>
-      <div className="border-t border-slate-200 p-3">
+
+      <div className="border-t p-2" style={{ borderColor: "rgba(255,255,255,0.12)" }}>
         <button
           type="button"
           onClick={handleLogout}
           disabled={saindo}
-          className="w-full rounded-md px-3 py-2 text-left text-sm font-medium text-slate-700 transition-colors hover:bg-slate-200 disabled:cursor-not-allowed disabled:opacity-60"
+          className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-all disabled:cursor-not-allowed disabled:opacity-50"
+          style={{ color: "rgba(255,255,255,0.6)" }}
+          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.08)"; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}
         >
+          <LogOut size={16} aria-hidden />
           {saindo ? "Saindo..." : "Sair"}
         </button>
       </div>
