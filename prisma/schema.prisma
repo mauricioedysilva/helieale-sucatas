@@ -86,6 +86,7 @@ model ItemPedido {
   quantidade    Float
   valorUnitario Float
   subtotal      Float
+  embalagem     String  @default("NENHUMA")
 
   pedidoId  String
   pedido    Pedido  @relation(fields: [pedidoId], references: [id], onDelete: Cascade)

@@ -108,6 +108,7 @@ export function PedidoForm({
             produtoId: i.produtoId,
             quantidade: quantidadeLiquida(i),
             valorUnitario: Number(i.valorUnitario),
+            embalagem: i.embalagem,
           })),
         }),
       });

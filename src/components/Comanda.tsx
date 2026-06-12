@@ -1,5 +1,10 @@
 "use client";
 
+const TARA_LABEL: Record<string, string> = {
+  BAG: "Bag (tara: −2 kg)",
+  SACO: "Saco (tara: −100 g)",
+};
+
 export type PedidoParaImpressao = {
   id: string;
   tipo: "COMPRA" | "VENDA";
@@ -13,6 +18,7 @@ export type PedidoParaImpressao = {
     quantidade: number;
     valorUnitario: number;
     subtotal: number;
+    embalagem?: string | null;
     produto: { nome: string; unidade: "KG" | "UNIDADE" };
   }[];
 };
@@ -39,20 +45,36 @@ export function Comanda({ pedido }: { pedido: PedidoParaImpressao | null }) {
       </div>
       <div className="linha">
         <span>Pagamento:</span>
-        <span>{pedido.formaPagamento?.nome ?? "—"}</span>
+        <span>{pedido.formaPagamento?.nome ?? "Não informado"}</span>
       </div>
       <hr />
-      {pedido.itens.map((item) => (
-        <div key={item.id} style={{ marginBottom: "1mm" }}>
-          <div>{item.produto.nome}</div>
-          <div className="linha">
-            <span>
-              {item.quantidade} {item.produto.unidade === "KG" ? "kg" : "un"} × R$ {item.valorUnitario.toFixed(2)}
-            </span>
-            <span>R$ {item.subtotal.toFixed(2)}</span>
+      {pedido.itens.map((item) => {
+        const embalagem = item.embalagem ?? "NENHUMA";
+        const taraLabel = TARA_LABEL[embalagem];
+        const taraKg = embalagem === "BAG" ? 2 : embalagem === "SACO" ? 0.1 : 0;
+        const pesoBruto = item.produto.unidade === "KG" && taraKg > 0
+          ? item.quantidade + taraKg
+          : null;
+        return (
+          <div key={item.id} style={{ marginBottom: "1mm" }}>
+            <div>{item.produto.nome}</div>
+            {taraLabel && (
+              <div style={{ fontSize: "0.85em", color: "#555" }}>
+                {taraLabel}
+                {pesoBruto !== null && (
+                  <span> | bruto: {pesoBruto.toFixed(2)} kg</span>
+                )}
+              </div>
+            )}
+            <div className="linha">
+              <span>
+                {item.quantidade} {item.produto.unidade === "KG" ? "kg" : "un"} × R$ {item.valorUnitario.toFixed(2)}
+              </span>
+              <span>R$ {item.subtotal.toFixed(2)}</span>
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
       <hr />
       <div className="linha" style={{ fontWeight: "bold" }}>
         <span>TOTAL</span>
@@ -80,6 +102,4 @@ export function imprimirComanda() {
   setTimeout(() => window.print(), 50);
 }
 
-// Alias genérico: o mecanismo de impressão (ativar `.recibo-80mm` e chamar window.print)
-// é o mesmo para qualquer recibo de 80mm — comandas de pedido ou relatórios de fechamento.
 export const imprimirRecibo = imprimirComanda;
