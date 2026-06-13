@@ -38,14 +38,15 @@ body {
   }
   body.printing-receipt .recibo-80mm {
     display: block;
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
-    width: 76mm;
-    padding: 2mm 3mm;
+    width: 80mm;
+    box-sizing: border-box;
+    padding: 3mm 2mm;
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 13px;
-    line-height: 1.5;
+    font-size: 15px;
+    line-height: 1.6;
     color: #000 !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
@@ -54,10 +55,13 @@ body {
     color: #000 !important;
   }
   body.printing-receipt .recibo-80mm h2 {
-    font-size: 16px;
+    font-size: 19px;
     font-weight: bold;
     text-align: center;
     margin: 0 0 2mm 0;
+  }
+  body.printing-receipt .recibo-80mm p {
+    margin: 0;
   }
   body.printing-receipt .recibo-80mm .linha {
     display: flex;
@@ -67,7 +71,7 @@ body {
   body.printing-receipt .recibo-80mm hr {
     border: none;
     border-top: 1.5px solid #000;
-    margin: 2.5mm 0;
+    margin: 3mm 0;
   }
   @page {
     size: 80mm auto;
