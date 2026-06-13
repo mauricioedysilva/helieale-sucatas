@@ -59,11 +59,11 @@ export function Comanda({ pedido }: { pedido: PedidoParaImpressao | null }) {
           <div key={item.id} style={{ marginBottom: "1mm" }}>
             <div>{item.produto.nome}</div>
             {taraLabel && (
-              <div style={{ fontSize: "0.85em", color: "#555" }}>
-                {taraLabel}
+              <div style={{ fontWeight: "bold" }}>
                 {pesoBruto !== null && (
-                  <span> | bruto: {pesoBruto.toFixed(2)} kg</span>
+                  <span>Bruto: {pesoBruto.toFixed(2)} kg | </span>
                 )}
+                <span>{taraLabel}</span>
               </div>
             )}
             <div className="linha">
