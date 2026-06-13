@@ -38,7 +38,7 @@ body {
   }
   body.printing-receipt .recibo-80mm {
     display: block;
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 80mm;

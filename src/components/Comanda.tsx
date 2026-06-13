@@ -92,11 +92,17 @@ export function Comanda({ pedido }: { pedido: PedidoParaImpressao | null }) {
   );
 }
 
+let _imprimindo = false;
+
 export function imprimirComanda() {
+  if (_imprimindo) return;
+  _imprimindo = true;
+
   document.body.classList.add("printing-receipt");
   const handleAfterPrint = () => {
     document.body.classList.remove("printing-receipt");
     window.removeEventListener("afterprint", handleAfterPrint);
+    _imprimindo = false;
   };
   window.addEventListener("afterprint", handleAfterPrint);
   setTimeout(() => window.print(), 50);
