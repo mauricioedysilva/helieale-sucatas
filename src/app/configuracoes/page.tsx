@@ -119,7 +119,8 @@ function ImpressaoAutomaticaCard() {
     else localStorage.removeItem("impressao-automatica");
   }
 
-  const atalho = `"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe" --kiosk-printing --app=${urlSistema}`;
+  const atalhoEdge = `"C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe" --kiosk-printing --app=${urlSistema}`;
+  const atalhoChrome = `"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe" --kiosk-printing --app=${urlSistema}`;
 
   return (
     <Card className="mb-6">
@@ -141,15 +142,23 @@ function ImpressaoAutomaticaCard() {
 
       {ativa && (
         <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
-          <p className="mb-2 text-sm font-semibold text-amber-800">Para imprimir sem o diálogo do navegador, siga estes passos uma única vez:</p>
+          <p className="mb-3 text-sm font-semibold text-amber-800">Para imprimir sem o diálogo do navegador, siga estes passos uma única vez:</p>
           <ol className="space-y-1 pl-4 text-sm text-amber-700" style={{ listStyleType: "decimal" }}>
             <li>Clique com o botão direito na área de trabalho → <strong>Novo → Atalho</strong></li>
-            <li>Cole o caminho abaixo no campo de local e clique em <strong>Avançar</strong>:</li>
+            <li>Cole o caminho do seu navegador no campo de local e clique em <strong>Avançar</strong>:</li>
           </ol>
-          <div className="my-2 select-all break-all rounded border border-amber-200 bg-white p-2 font-mono text-xs text-slate-700">
-            {atalho}
+
+          <p className="mt-3 mb-1 text-xs font-bold text-amber-800">Microsoft Edge (mais comum):</p>
+          <div className="select-all break-all rounded border border-amber-200 bg-white p-2 font-mono text-xs text-slate-700">
+            {atalhoEdge}
           </div>
-          <ol className="space-y-1 pl-4 text-sm text-amber-700" style={{ listStyleType: "decimal" }} start={3}>
+
+          <p className="mt-2 mb-1 text-xs font-bold text-amber-800">Google Chrome:</p>
+          <div className="select-all break-all rounded border border-amber-200 bg-white p-2 font-mono text-xs text-slate-700">
+            {atalhoChrome}
+          </div>
+
+          <ol className="mt-3 space-y-1 pl-4 text-sm text-amber-700" style={{ listStyleType: "decimal" }} start={3}>
             <li>Dê o nome <strong>Sucatas Alumínio</strong> e clique em <strong>Concluir</strong></li>
             <li>Use <strong>sempre esse atalho</strong> para abrir o sistema</li>
             <li>Defina sua impressora térmica como <strong>impressora padrão</strong> no Windows</li>
