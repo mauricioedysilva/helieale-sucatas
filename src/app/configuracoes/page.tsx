@@ -103,6 +103,66 @@ function TrocarSenhaCard() {
   );
 }
 
+function ImpressaoAutomaticaCard() {
+  const [ativa, setAtiva] = useState(false);
+  const [urlSistema, setUrlSistema] = useState("");
+
+  useEffect(() => {
+    setAtiva(localStorage.getItem("impressao-automatica") === "ativa");
+    setUrlSistema(window.location.origin);
+  }, []);
+
+  function toggle() {
+    const novo = !ativa;
+    setAtiva(novo);
+    if (novo) localStorage.setItem("impressao-automatica", "ativa");
+    else localStorage.removeItem("impressao-automatica");
+  }
+
+  const atalho = `"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe" --kiosk-printing --app=${urlSistema}`;
+
+  return (
+    <Card className="mb-6">
+      <h2 className="mb-1 text-base font-semibold text-slate-800">Impressão Automática</h2>
+      <p className="mb-4 text-sm text-slate-500">
+        Quando ativado, a comanda é impressa automaticamente ao registrar uma compra ou venda — sem precisar clicar em "Imprimir comanda".
+      </p>
+
+      <div className="mb-4 flex items-center gap-3">
+        <button
+          type="button"
+          onClick={toggle}
+          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${ativa ? "bg-[#1A6B1A]" : "bg-slate-300"}`}
+        >
+          <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${ativa ? "translate-x-6" : "translate-x-1"}`} />
+        </button>
+        <span className="text-sm font-medium text-slate-700">{ativa ? "Ativado neste dispositivo" : "Desativado"}</span>
+      </div>
+
+      {ativa && (
+        <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
+          <p className="mb-2 text-sm font-semibold text-amber-800">Para imprimir sem o diálogo do navegador, siga estes passos uma única vez:</p>
+          <ol className="space-y-1 pl-4 text-sm text-amber-700" style={{ listStyleType: "decimal" }}>
+            <li>Clique com o botão direito na área de trabalho → <strong>Novo → Atalho</strong></li>
+            <li>Cole o caminho abaixo no campo de local e clique em <strong>Avançar</strong>:</li>
+          </ol>
+          <div className="my-2 select-all break-all rounded border border-amber-200 bg-white p-2 font-mono text-xs text-slate-700">
+            {atalho}
+          </div>
+          <ol className="space-y-1 pl-4 text-sm text-amber-700" style={{ listStyleType: "decimal" }} start={3}>
+            <li>Dê o nome <strong>Sucatas Alumínio</strong> e clique em <strong>Concluir</strong></li>
+            <li>Use <strong>sempre esse atalho</strong> para abrir o sistema</li>
+            <li>Defina sua impressora térmica como <strong>impressora padrão</strong> no Windows</li>
+          </ol>
+          <p className="mt-3 text-xs text-amber-600">
+            Esta configuração é salva neste dispositivo. Cada computador precisa ativar separadamente.
+          </p>
+        </div>
+      )}
+    </Card>
+  );
+}
+
 export default function ConfiguracoesPage() {
   const [formas, setFormas] = useState<FormaPagamento[]>([]);
   const [nome, setNome] = useState("");
@@ -145,6 +205,7 @@ export default function ConfiguracoesPage() {
       <PageTitle title="Configurações" subtitle="Formas de pagamento exibidas ao finalizar Compras e Vendas, e dados de acesso" />
 
       <TrocarSenhaCard />
+      <ImpressaoAutomaticaCard />
 
       <Card className="mb-6">
         <form onSubmit={handleSubmit} className="flex items-end gap-3">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button, Card, EmptyState, Table } from "@/components/ui";
 import { Comanda, imprimirComanda, type PedidoParaImpressao } from "@/components/Comanda";
 
@@ -14,10 +14,8 @@ export function PedidoHistorico({ tipo, refreshKey }: { tipo: "COMPRA" | "VENDA"
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
   const [loading, setLoading] = useState(true);
   const [pedidoParaImprimir, setPedidoParaImprimir] = useState<Pedido | null>(null);
-  // A tela operacional mostra somente os lançamentos de hoje — a cada virada do dia
-  // (00:00) a lista "reseta" sozinha, pois passa a buscar os pedidos do novo dia.
-  // O histórico completo continua disponível em Pedidos e Relatórios.
   const [dia, setDia] = useState(todayStr());
+  const ultimoRefreshKey = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -32,7 +30,15 @@ export function PedidoHistorico({ tipo, refreshKey }: { tipo: "COMPRA" | "VENDA"
     const params = new URLSearchParams({ tipo, de: dia, ate: dia });
     fetch(`/api/pedidos?${params.toString()}`)
       .then((r) => r.json())
-      .then(setPedidos)
+      .then((data: Pedido[]) => {
+        setPedidos(data);
+        const novoRegistro = ultimoRefreshKey.current !== undefined && ultimoRefreshKey.current !== refreshKey;
+        if (novoRegistro && data.length > 0 && localStorage.getItem("impressao-automatica") === "ativa") {
+          setPedidoParaImprimir(data[0]);
+          imprimirComanda();
+        }
+        ultimoRefreshKey.current = refreshKey;
+      })
       .finally(() => setLoading(false));
   }, [tipo, dia, refreshKey]);
 
