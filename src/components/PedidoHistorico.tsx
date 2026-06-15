@@ -16,6 +16,8 @@ export function PedidoHistorico({ tipo, refreshKey }: { tipo: "COMPRA" | "VENDA"
   const [pedidoParaImprimir, setPedidoParaImprimir] = useState<Pedido | null>(null);
   const [dia, setDia] = useState(todayStr());
   const ultimoRefreshKey = useRef<number | undefined>(undefined);
+  // Sinaliza que o próximo render deve disparar impressão automática
+  const aguardandoAutoprint = useRef(false);
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -31,16 +33,28 @@ export function PedidoHistorico({ tipo, refreshKey }: { tipo: "COMPRA" | "VENDA"
     fetch(`/api/pedidos?${params.toString()}`)
       .then((r) => r.json())
       .then((data: Pedido[]) => {
+        const novoRegistro =
+          ultimoRefreshKey.current !== undefined && ultimoRefreshKey.current !== refreshKey;
+
         setPedidos(data);
-        const novoRegistro = ultimoRefreshKey.current !== undefined && ultimoRefreshKey.current !== refreshKey;
+
         if (novoRegistro && data.length > 0 && localStorage.getItem("impressao-automatica") === "ativa") {
+          aguardandoAutoprint.current = true;
           setPedidoParaImprimir(data[0]);
-          imprimirComanda();
         }
+
         ultimoRefreshKey.current = refreshKey;
       })
       .finally(() => setLoading(false));
   }, [tipo, dia, refreshKey]);
+
+  // Dispara a impressão DEPOIS que o React re-renderizou com o novo pedido
+  useEffect(() => {
+    if (pedidoParaImprimir && aguardandoAutoprint.current) {
+      aguardandoAutoprint.current = false;
+      imprimirComanda();
+    }
+  }, [pedidoParaImprimir]);
 
   function handleImprimir(pedido: Pedido) {
     setPedidoParaImprimir(pedido);
