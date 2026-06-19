@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
   return NextResponse.json(pedidos);
 }
 
-type ItemInput = { produtoId: string; quantidade: number; valorUnitario: number; embalagem?: string };
+type ItemInput = { produtoId: string; quantidade: number; valorUnitario: number; embalagem?: string; embalagemQtd?: number };
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
         const valorUnitario = Number(item.valorUnitario);
         const subtotal = quantidade * valorUnitario;
         valorTotal += subtotal;
-        return { produtoId: item.produtoId, quantidade, valorUnitario, subtotal, embalagem: item.embalagem ?? "NENHUMA" };
+        return { produtoId: item.produtoId, quantidade, valorUnitario, subtotal, embalagem: item.embalagem ?? "NENHUMA", embalagemQtd: item.embalagemQtd ?? 1 };
       });
 
       const novoPedido = await tx.pedido.create({

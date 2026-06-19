@@ -19,6 +19,7 @@ export type PedidoParaImpressao = {
     valorUnitario: number;
     subtotal: number;
     embalagem?: string | null;
+    embalagemQtd?: number | null;
     produto: { nome: string; unidade: "KG" | "UNIDADE" };
   }[];
 };
@@ -50,20 +51,18 @@ export function Comanda({ pedido }: { pedido: PedidoParaImpressao | null }) {
       <hr />
       {pedido.itens.map((item) => {
         const embalagem = item.embalagem ?? "NENHUMA";
-        const taraLabel = TARA_LABEL[embalagem];
-        const taraKg = embalagem === "BAG" ? 2 : embalagem === "SACO" ? 0.1 : 0;
-        const pesoBruto = item.produto.unidade === "KG" && taraKg > 0
-          ? item.quantidade + taraKg
-          : null;
+        const qtd = item.embalagemQtd ?? 1;
+        const taraUnitKg = embalagem === "BAG" ? 2 : embalagem === "SACO" ? 0.1 : 0;
+        const taraTotalKg = taraUnitKg * qtd;
+        const temTara = taraTotalKg > 0 && item.produto.unidade === "KG";
+        const pesoBruto = temTara ? item.quantidade + taraTotalKg : null;
+        const nomeEmb = embalagem === "BAG" ? "Bag" : embalagem === "SACO" ? "Saco" : "";
         return (
           <div key={item.id} style={{ marginBottom: "1mm" }}>
             <div>{item.produto.nome}</div>
-            {taraLabel && (
+            {temTara && (
               <div style={{ fontWeight: "bold" }}>
-                {pesoBruto !== null && (
-                  <span>Bruto: {pesoBruto.toFixed(2)} kg | </span>
-                )}
-                <span>{taraLabel}</span>
+                <span>Bruto: {pesoBruto!.toFixed(2)} kg | {nomeEmb} {qtd}x (tara: −{taraTotalKg.toFixed(2)} kg)</span>
               </div>
             )}
             <div className="linha">

@@ -9,16 +9,20 @@ type Produto = { id: string; nome: string; unidade: "KG" | "UNIDADE"; valorUnita
 type FormaPagamento = { id: string; nome: string };
 
 type Embalagem = "NENHUMA" | "BAG" | "SACO";
-type ItemForm = { produtoId: string; quantidade: string; valorUnitario: string; embalagem: Embalagem };
+type ItemForm = { produtoId: string; quantidade: string; valorUnitario: string; embalagem: Embalagem; embalagemQtd: number };
 
-const TARA: Record<Embalagem, number> = { NENHUMA: 0, BAG: 2, SACO: 0.1 };
+const TARA_UNIT: Record<Embalagem, number> = { NENHUMA: 0, BAG: 2, SACO: 0.1 };
 
-const emptyItem: ItemForm = { produtoId: "", quantidade: "", valorUnitario: "", embalagem: "NENHUMA" };
+const emptyItem: ItemForm = { produtoId: "", quantidade: "", valorUnitario: "", embalagem: "NENHUMA", embalagemQtd: 1 };
+
+function taraTotal(item: ItemForm): number {
+  return TARA_UNIT[item.embalagem] * item.embalagemQtd;
+}
 
 function quantidadeLiquida(item: ItemForm): number {
   const bruto = parseFloat(item.quantidade);
   if (Number.isNaN(bruto)) return 0;
-  return Math.max(0, bruto - TARA[item.embalagem]);
+  return Math.max(0, bruto - taraTotal(item));
 }
 
 function subtotalOf(item: ItemForm) {
@@ -63,6 +67,7 @@ export function PedidoForm({
       produtoId,
       valorUnitario: produto ? String(produto.valorUnitario) : "",
       embalagem: produto?.unidade === "KG" ? itens[index].embalagem : "NENHUMA",
+      embalagemQtd: produto?.unidade === "KG" ? itens[index].embalagemQtd : 1,
     });
   }
 
@@ -109,6 +114,7 @@ export function PedidoForm({
             quantidade: quantidadeLiquida(i),
             valorUnitario: Number(i.valorUnitario),
             embalagem: i.embalagem,
+            embalagemQtd: i.embalagemQtd,
           })),
         }),
       });
@@ -156,7 +162,7 @@ export function PedidoForm({
             {itens.map((item, index) => {
               const produto = produtos.find((p) => p.id === item.produtoId);
               const isKg = produto?.unidade === "KG";
-              const tara = TARA[item.embalagem];
+              const tara = taraTotal(item);
               const liquida = quantidadeLiquida(item);
               const temQuantidade = item.quantidade !== "" && !Number.isNaN(parseFloat(item.quantidade));
               return (
@@ -211,7 +217,7 @@ export function PedidoForm({
                   </div>
 
                   {isKg && (
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 rounded-md bg-slate-50 px-3 py-2">
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-md bg-slate-50 px-3 py-2">
                       <span className="text-xs font-medium text-slate-500">Embalagem (tara):</span>
                       {(["NENHUMA", "BAG", "SACO"] as Embalagem[]).map((em) => (
                         <label key={em} className="flex cursor-pointer items-center gap-1.5">
@@ -220,7 +226,7 @@ export function PedidoForm({
                             name={`embalagem-${index}`}
                             value={em}
                             checked={item.embalagem === em}
-                            onChange={() => updateItem(index, { embalagem: em })}
+                            onChange={() => updateItem(index, { embalagem: em, embalagemQtd: 1 })}
                             className="accent-[#1A6B1A]"
                           />
                           <span className="text-xs font-semibold text-slate-700">
@@ -230,9 +236,30 @@ export function PedidoForm({
                           </span>
                         </label>
                       ))}
+
+                      {item.embalagem !== "NENHUMA" && (
+                        <div className="flex items-center gap-1.5 rounded-md border border-slate-300 bg-white px-2 py-1">
+                          <span className="text-xs font-medium text-slate-500">Qtd:</span>
+                          {[1, 2, 3, 4].map((n) => (
+                            <button
+                              key={n}
+                              type="button"
+                              onClick={() => updateItem(index, { embalagemQtd: n })}
+                              className={`rounded px-2 py-0.5 text-xs font-bold transition-colors ${
+                                item.embalagemQtd === n
+                                  ? "bg-[#1A6B1A] text-white"
+                                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                              }`}
+                            >
+                              {n}x
+                            </button>
+                          ))}
+                        </div>
+                      )}
+
                       {tara > 0 && temQuantidade && (
                         <span className="ml-auto rounded-md bg-amber-100 px-2 py-0.5 text-xs font-bold text-amber-800">
-                          {parseFloat(item.quantidade).toFixed(2)} kg bruto − {tara} kg tara = {liquida.toFixed(2)} kg líquido
+                          {parseFloat(item.quantidade).toFixed(2)} kg bruto − {tara.toFixed(2)} kg tara ({item.embalagemQtd}x) = {liquida.toFixed(2)} kg líquido
                         </span>
                       )}
                     </div>
