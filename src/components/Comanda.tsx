@@ -98,12 +98,25 @@ export function imprimirComanda() {
   _imprimindo = true;
 
   document.body.classList.add("printing-receipt");
-  const handleAfterPrint = () => {
+
+  // Libera o estado de impressão. É protegido contra dupla execução porque
+  // pode ser chamado tanto pelo evento afterprint quanto pelo tempo-limite.
+  let finalizado = false;
+  const finalizar = () => {
+    if (finalizado) return;
+    finalizado = true;
+    clearTimeout(timer);
     document.body.classList.remove("printing-receipt");
-    window.removeEventListener("afterprint", handleAfterPrint);
+    window.removeEventListener("afterprint", finalizar);
     _imprimindo = false;
   };
-  window.addEventListener("afterprint", handleAfterPrint);
+
+  // Rede de segurança: em impressão silenciosa (kiosk-printing) ou quando a
+  // impressora térmica falha, o evento afterprint NÃO dispara. Sem isto, a
+  // trava _imprimindo ficaria presa e bloquearia todas as próximas impressões.
+  const timer = setTimeout(finalizar, 5000);
+
+  window.addEventListener("afterprint", finalizar);
   setTimeout(() => window.print(), 50);
 }
 
