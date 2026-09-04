@@ -91,33 +91,24 @@ export function Comanda({ pedido }: { pedido: PedidoParaImpressao | null }) {
   );
 }
 
-let _imprimindo = false;
+let _imprimindoAte = 0;
 
 export function imprimirComanda() {
-  if (_imprimindo) return;
-  _imprimindo = true;
+  const agora = Date.now();
+  // Bloqueia apenas chamadas duplicadas disparadas na mesma fração de segundo
+  // (duplo clique, re-render). NÃO depende do evento afterprint para liberar —
+  // em impressão silenciosa (kiosk-printing) ou quando a impressora falha, esse
+  // evento não é confiável e travava todas as impressões seguintes.
+  if (agora < _imprimindoAte) return;
+  _imprimindoAte = agora + 1200;
 
   document.body.classList.add("printing-receipt");
-
-  // Libera o estado de impressão. É protegido contra dupla execução porque
-  // pode ser chamado tanto pelo evento afterprint quanto pelo tempo-limite.
-  let finalizado = false;
-  const finalizar = () => {
-    if (finalizado) return;
-    finalizado = true;
-    clearTimeout(timer);
-    document.body.classList.remove("printing-receipt");
-    window.removeEventListener("afterprint", finalizar);
-    _imprimindo = false;
-  };
-
-  // Rede de segurança: em impressão silenciosa (kiosk-printing) ou quando a
-  // impressora térmica falha, o evento afterprint NÃO dispara. Sem isto, a
-  // trava _imprimindo ficaria presa e bloquearia todas as próximas impressões.
-  const timer = setTimeout(finalizar, 5000);
-
-  window.addEventListener("afterprint", finalizar);
-  setTimeout(() => window.print(), 50);
+  setTimeout(() => {
+    window.print();
+    // Remove a classe logo em seguida: window.print() já devolveu o controle
+    // (com diálogo, ao fechar; em kiosk-printing, quase imediatamente).
+    setTimeout(() => document.body.classList.remove("printing-receipt"), 300);
+  }, 50);
 }
 
 export const imprimirRecibo = imprimirComanda;

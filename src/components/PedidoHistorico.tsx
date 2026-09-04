@@ -14,10 +14,11 @@ export function PedidoHistorico({ tipo, refreshKey }: { tipo: "COMPRA" | "VENDA"
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
   const [loading, setLoading] = useState(true);
   const [pedidoParaImprimir, setPedidoParaImprimir] = useState<Pedido | null>(null);
+  // Contador incrementado a cada pedido de impressão: dispara o efeito de impressão
+  // mesmo ao reimprimir o mesmo pedido (quando a referência não muda).
+  const [gatilhoImpressao, setGatilhoImpressao] = useState(0);
   const [dia, setDia] = useState(todayStr());
   const ultimoRefreshKey = useRef<number | undefined>(undefined);
-  // Sinaliza que o próximo render deve disparar impressão automática
-  const aguardandoAutoprint = useRef(false);
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -39,8 +40,8 @@ export function PedidoHistorico({ tipo, refreshKey }: { tipo: "COMPRA" | "VENDA"
         setPedidos(data);
 
         if (novoRegistro && data.length > 0 && localStorage.getItem("impressao-automatica") === "ativa") {
-          aguardandoAutoprint.current = true;
           setPedidoParaImprimir(data[0]);
+          setGatilhoImpressao((n) => n + 1);
         }
 
         ultimoRefreshKey.current = refreshKey;
@@ -50,15 +51,15 @@ export function PedidoHistorico({ tipo, refreshKey }: { tipo: "COMPRA" | "VENDA"
 
   // Dispara a impressão DEPOIS que o React re-renderizou com o novo pedido
   useEffect(() => {
-    if (pedidoParaImprimir && aguardandoAutoprint.current) {
-      aguardandoAutoprint.current = false;
+    if (gatilhoImpressao > 0 && pedidoParaImprimir) {
       imprimirComanda();
     }
-  }, [pedidoParaImprimir]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gatilhoImpressao]);
 
   function handleImprimir(pedido: Pedido) {
     setPedidoParaImprimir(pedido);
-    imprimirComanda();
+    setGatilhoImpressao((n) => n + 1);
   }
 
   return (
