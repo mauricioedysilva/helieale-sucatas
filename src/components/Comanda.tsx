@@ -87,6 +87,12 @@ export function Comanda({ pedido }: { pedido: PedidoParaImpressao | null }) {
       )}
       <hr />
       <p style={{ textAlign: "center", margin: 0 }}>Obrigado pela preferência!</p>
+      <hr />
+      <p style={{ textAlign: "center", margin: 0 }}>Tel: 34 3325-2281</p>
+      <p style={{ textAlign: "center", margin: 0 }}>Tel: 34 99691-1331</p>
+      <p style={{ textAlign: "center", margin: "2mm 0 0 0", fontWeight: "bold", fontStyle: "italic" }}>
+        Se Deus é por nós, quem será contra nós?
+      </p>
     </div>
   );
 }
